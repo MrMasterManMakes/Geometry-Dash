@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geometry Dash Clone</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const player = { x: 50, y: canvas.height / 2, size: 50, speed: 2 };
+    let gravity = 0.05;
+    let jump = -2;
+
+    function drawPlayer() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(player.x, player.y, player.size, player.size);
+    }
+
+    function update() {
+      player.y += player.speed;
+      player.speed += gravity;
+      if (player.y + player.size > canvas.height || player.y < 0) {
+        gameOver();
+      }
+    }
+
+    function jumpPlayer() {
+      player.speed = jump;
+    }
+
+    function gameOver() {
+      alert('Game Over');
+      player.y = canvas.height / 2;
+      player.speed = 2;
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.code === 'Space') {
+        jumpPlayer();
+      }
+    });
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPlayer();
+      update();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
