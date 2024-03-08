@@ -16,35 +16,48 @@
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const player = { x: 50, y: canvas.height / 2, size: 50, speed: 2 };
-    let gravity = 0.05;
-    let jump = -2;
+    const player = { x: 50, y: canvas.height / 2, size: 50, speed: 5, jump: -10 };
+    const gravity = 0.5;
+    let isJumping = false;
+
+    // Define platforms
+    const platforms = [
+      { x: 200, y: 300, width: 100, height: 20 },
+      { x: 400, y: 250, width: 100, height: 20 },
+      { x: 600, y: 350, width: 100, height: 20 }
+    ];
 
     function drawPlayer() {
       ctx.fillStyle = 'black';
       ctx.fillRect(player.x, player.y, player.size, player.size);
     }
 
+    function drawPlatforms() {
+      ctx.fillStyle = 'green';
+      platforms.forEach(platform => {
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+      });
+    }
+
     function update() {
       player.y += player.speed;
       player.speed += gravity;
-      if (player.y + player.size > canvas.height || player.y < 0) {
-        gameOver();
+      if (player.y + player.size > canvas.height) {
+        player.y = canvas.height - player.size;
+        player.speed = 0;
+        isJumping = false;
       }
     }
 
     function jumpPlayer() {
-      player.speed = jump;
-    }
-
-    function gameOver() {
-      alert('Game Over');
-      player.y = canvas.height / 2;
-      player.speed = 2;
+      if (!isJumping) {
+        player.speed = player.jump;
+        isJumping = true;
+      }
     }
 
     document.addEventListener('keydown', function(event) {
@@ -56,6 +69,7 @@
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawPlayer();
+      drawPlatforms();
       update();
       requestAnimationFrame(gameLoop);
     }
